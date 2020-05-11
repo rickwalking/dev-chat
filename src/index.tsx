@@ -11,6 +11,9 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
 import { Provider } from 'react-redux';
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+
+
+import Registration from './components/Registration/Registration';
 import Login from './components/Login/Login';
 
 const store = configureStore();
@@ -31,7 +34,7 @@ ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
             <ReactReduxFirebaseProvider {...rrfProps}>
-                <Login />
+                <Registration />
             </ReactReduxFirebaseProvider>
         </Provider>
     </React.StrictMode>,

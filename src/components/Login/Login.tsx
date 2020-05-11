@@ -7,9 +7,6 @@ import React, {
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 
-import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
-import FacebookIcon from '@material-ui/icons/Facebook';
-
 import {
     makeStyles,
     Theme,
@@ -20,7 +17,14 @@ import {
     IconButton,
 } from '@material-ui/core';
 
+import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
+import FacebookIcon from '@material-ui/icons/Facebook';
+
+
 import Loading from '../Loading/Loading';
+import AlertSnackbar from '../AlertSnackbar/AlertSnackbar';
+
+import { useFirebase } from 'react-redux-firebase';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -65,6 +69,10 @@ const Login = (): JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isSnackOpen, setIsSnackOpen] = useState(false);
+    const [error, setError] = useState('');
+
+    const firebase = useFirebase();
 
     const classes = useStyles();
 
@@ -88,7 +96,32 @@ const Login = (): JSX.Element => {
             return;
         }
 
+        setError('');
         setIsLoading(true);
+
+        firebase.login({
+            email: username,
+            password,
+        }).then((user): void => {
+            setIsLoading(false);
+            console.log(user);
+        }).catch((error): void => {
+            console.log(error);
+            setIsLoading(false);
+            setError(error.message);
+            setIsSnackOpen(true);
+        });
+    }
+
+    const facebookLogin = (): void => {
+        firebase.login({
+            provider: 'facebook',
+            type: 'redirect',
+        });
+    }
+
+    const handleAlertClosing = () => {
+        setIsSnackOpen(false);
     }
 
     return (
@@ -154,6 +187,7 @@ const Login = (): JSX.Element => {
                     </Typography>
                     <div>
                         <IconButton
+                            onClick={facebookLogin}
                             component='span'
                             className={classes.buttonFacebook}
                         >
@@ -166,6 +200,12 @@ const Login = (): JSX.Element => {
                     </div>
                 </div>
             </Container>
+            <AlertSnackbar
+                isOpen={isSnackOpen}
+                message={error}
+                type='error'
+                closeCallback={handleAlertClosing}
+            />
         </>
     );
 }
