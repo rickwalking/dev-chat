@@ -10,14 +10,15 @@ interface SnackProps {
     isOpen: boolean;
     message: string;
     type: Color;
-    closeCallback: () => void,
+    closeCallback: () => void;
 }
 
+// tslint:disable-next-line: typedef
 const useStyles = makeStyles(() => ({
     root: {
         width: '100%',
     },
-}))
+}));
 
 const AlertSnackbar = (props: SnackProps): JSX.Element => {
     const classes = useStyles();

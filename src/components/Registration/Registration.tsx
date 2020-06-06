@@ -14,10 +14,14 @@ import {
     Button,
 } from '@material-ui/core';
 
-import Loading from '../Loading/Loading';
+import md5 from 'md5';
+
 import { useFirebase } from 'react-redux-firebase';
+
+import Loading from '../Loading/Loading';
 import AlertSnackbar from '../AlertSnackbar/AlertSnackbar';
 
+// tslint:disable-next-line: typedef
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
         display: 'flex',
@@ -31,10 +35,10 @@ const useStyles = makeStyles((theme: Theme) => ({
             display:'flex',
             marginTop: theme.spacing(2),
             '& .buttonFirst': {
-                marginRight: theme.spacing(2)
-            }
-        }
-    }
+                marginRight: theme.spacing(2),
+            },
+        },
+    },
 }));
 
 const Registration = (): JSX.Element => {
@@ -64,48 +68,49 @@ const Registration = (): JSX.Element => {
             password,
         }, {
             displayName: name,
-        }).then((user): void => {
+            photoURL: `http://gravatar.com/avatar/${md5(email)}?d=identicon`,
+        }).then((): void => {
             setIsLoading(false);
-        }).catch((error) => {
+        }).catch((errorResponse: any): void => {
             setIsLoading(false);
             setSnackbarOpen(true);
-            setError(error.message);
-        })
-    }
+            setError(errorResponse.message);
+        });
+    };
 
-    const facebookRegistration = () => {
+    const facebookRegistration = (): void => {
         firebase.login({
             provider: 'facebook',
             type: 'redirect',
-        }).then((user) => {
-            console.log(user);
-        }).catch((error) => {
+        }).then((): void => {
+            //
+        }).catch((errorResponse: any): void => {
             setSnackbarOpen(true);
-            setError(error.message);
+            setError(errorResponse.message);
         });
-    }
+    };
 
     const handleName = (event: ChangeEvent<HTMLInputElement>): void => {
         setName(event.target.value);
-    }
+    };
 
     const handleEmail = (event: ChangeEvent<HTMLInputElement>): void => {
         setEmail(event.target.value);
-    }
+    };
 
     const handlePassword = (event: ChangeEvent<HTMLInputElement>): void => {
         setPassword(event.target.value);
-    }
+    };
 
     const canRegister = (): boolean => {
         return name.length > 0 &&
             email.length > 0 &&
             password.length > 0;
-    }
+    };
 
-    const handleAlertClosing = () => {
+    const handleAlertClosing = (): void => {
         setSnackbarOpen(false);
-    }
+    };
 
     return (
         <>
@@ -121,16 +126,16 @@ const Registration = (): JSX.Element => {
                             label='Name'
                             margin='normal'
                             variant='outlined'
-                            fullWidth
-                            required
+                            fullWidth={true}
+                            required={true}
                             value={name}
                             onChange={handleName}
                         />
                         <TextField
                             label='Email'
                             variant='outlined'
-                            fullWidth
-                            required
+                            fullWidth={true}
+                            required={true}
                             value={email}
                             onChange={handleEmail}
                         />
@@ -138,8 +143,8 @@ const Registration = (): JSX.Element => {
                             label='Password'
                             variant='outlined'
                             margin='normal'
-                            fullWidth
-                            required
+                            fullWidth={true}
+                            required={true}
                             value={password}
                             type='password'
                             autoComplete='password'
@@ -149,7 +154,7 @@ const Registration = (): JSX.Element => {
                             <Button
                                 className='buttonFirst'
                                 variant='contained'
-                                fullWidth
+                                fullWidth={true}
                                 disabled={!canRegister()}
                                 color='primary'
                                 type='submit'
@@ -158,7 +163,7 @@ const Registration = (): JSX.Element => {
                             </Button>
                             <Button
                                 variant='contained'
-                                fullWidth
+                                fullWidth={true}
                                 color='primary'
                                 onClick={facebookRegistration}
                             >
@@ -176,6 +181,6 @@ const Registration = (): JSX.Element => {
             />
         </>
     );
-}
+};
 
 export default Registration;

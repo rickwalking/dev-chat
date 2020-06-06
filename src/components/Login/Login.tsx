@@ -17,15 +17,18 @@ import {
     IconButton,
 } from '@material-ui/core';
 
+import { useHistory } from 'react-router-dom';
+
 import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 import FacebookIcon from '@material-ui/icons/Facebook';
-
 
 import Loading from '../Loading/Loading';
 import AlertSnackbar from '../AlertSnackbar/AlertSnackbar';
 
 import { useFirebase } from 'react-redux-firebase';
+import { auth } from 'firebase';
 
+// tslint:disable-next-line: typedef
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
         marginTop: theme.spacing(8),
@@ -37,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
     },
     avatar: {
         marginRight: theme.spacing(1),
@@ -47,12 +50,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         marginTop: theme.spacing(10),
         '& .buttonsContainer': {
-            display:'flex',
+            display: 'flex',
             marginTop: theme.spacing(2),
             '& .buttonFirst': {
-                marginRight: theme.spacing(2)
-            }
-        }
+                marginRight: theme.spacing(2),
+            },
+        },
     },
     placeholder: {
         marginTop: theme.spacing(5),
@@ -62,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     facebook: {
         background: '#4267B2',
-    }
+    },
 }));
 
 const Login = (): JSX.Element => {
@@ -72,27 +75,29 @@ const Login = (): JSX.Element => {
     const [isSnackOpen, setIsSnackOpen] = useState(false);
     const [error, setError] = useState('');
 
+    const history = useHistory();
+
     const firebase = useFirebase();
 
     const classes = useStyles();
 
     const handleUsername = (event: ChangeEvent<HTMLInputElement>): void => {
         setUsername(event.target.value);
-    }
+    };
 
     const handlePassword = (event: ChangeEvent<HTMLInputElement>): void => {
         setPassword(event.target.value);
-    }
+    };
 
     const canLogin = (): boolean => {
         return username !== '' &&
             password !== '';
-    }
+    };
 
-    const handleLogin = (event: FormEvent<HTMLFormElement>) => {
+    const handleLogin = (event: FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
-        if(!canLogin()) {
+        if (!canLogin()) {
             return;
         }
 
@@ -102,27 +107,30 @@ const Login = (): JSX.Element => {
         firebase.login({
             email: username,
             password,
-        }).then((user): void => {
+        }).then((user: auth.UserCredential): void => {
             setIsLoading(false);
-            console.log(user);
-        }).catch((error): void => {
-            console.log(error);
+            history.push('/dashboard');
+        }).catch((responseError: auth.Error): void => {
             setIsLoading(false);
-            setError(error.message);
+            setError(responseError.message);
             setIsSnackOpen(true);
         });
-    }
+    };
 
     const facebookLogin = (): void => {
         firebase.login({
             provider: 'facebook',
             type: 'redirect',
         });
-    }
+    };
 
-    const handleAlertClosing = () => {
+    const handleAlertClosing = (): void => {
         setIsSnackOpen(false);
-    }
+    };
+
+    const goToRegistration = (): void => {
+        history.push('/registration');
+    };
 
     return (
         <>
@@ -143,16 +151,16 @@ const Login = (): JSX.Element => {
                         <TextField
                             label='Username'
                             variant='outlined'
-                            fullWidth
-                            required
+                            fullWidth={true}
+                            required={true}
                             onChange={handleUsername}
                             />
                         <TextField
                             label='Password'
                             variant='outlined'
                             margin='normal'
-                            fullWidth
-                            required
+                            fullWidth={true}
+                            required={true}
                             type='password'
                             autoComplete='password'
                             onChange={handlePassword}
@@ -161,7 +169,7 @@ const Login = (): JSX.Element => {
                             <Button
                                 className='buttonFirst'
                                 variant='contained'
-                                fullWidth
+                                fullWidth={true}
                                 disabled={!canLogin()}
                                 color='primary'
                                 type='submit'
@@ -170,8 +178,9 @@ const Login = (): JSX.Element => {
                             </Button>
                             <Button
                                 variant='outlined'
-                                fullWidth
+                                fullWidth={true}
                                 color='secondary'
+                                onClick={goToRegistration}
                             >
                                 Sign Up
                             </Button>
@@ -183,7 +192,7 @@ const Login = (): JSX.Element => {
                         variant='h5'
                         className={classes.placeholder}
                     >
-                        Or Sign In With
+                        Or Sign Up With
                     </Typography>
                     <div>
                         <IconButton
@@ -208,6 +217,6 @@ const Login = (): JSX.Element => {
             />
         </>
     );
-}
+};
 
 export default Login;

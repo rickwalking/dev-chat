@@ -6,13 +6,14 @@ interface LoadingProps {
     isLoading: boolean;
 }
 
+// tslint:disable-next-line: typedef
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
         position: 'absolute',
         top: '50%',
         left: '50%',
-    }
-}))
+    },
+}));
 
 const Loading = (props: LoadingProps): JSX.Element => {
     const classes = useStyles();
@@ -23,7 +24,7 @@ const Loading = (props: LoadingProps): JSX.Element => {
                 <div className={classes.container}>
                     <CircularProgress />
                 </div>
-            ): null}
+            ) : null}
         </>
     );
 };
