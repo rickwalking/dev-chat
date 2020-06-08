@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';
-import { FirebaseReducer } from 'react-redux-firebase';
+import {
+    FirebaseReducer,
+    UserProfile,
+} from 'react-redux-firebase';
 
 import { RootState } from '../../firebase/interfaces';
 
@@ -50,9 +53,9 @@ const Dashboard = (): JSX.Element =>  {
         setDrawerOpen(!drawerOpen);
     };
 
-    const auth: FirebaseReducer.AuthState =
-        useSelector((state: RootState): FirebaseReducer.AuthState =>
-            state.firebase.auth,
+    const profile: FirebaseReducer.Profile<UserProfile> =
+        useSelector((state: RootState): FirebaseReducer.Profile<UserProfile> =>
+            state.firebase.profile,
         );
 
   return (
@@ -68,7 +71,7 @@ const Dashboard = (): JSX.Element =>  {
             open={drawerOpen}
             anchor='left'
         >
-            <UserInfo auth={auth} />
+            <UserInfo profile={profile} />
             <Divider />
                 <DrawerList />
             </Drawer>

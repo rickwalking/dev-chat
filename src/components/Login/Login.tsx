@@ -7,6 +7,14 @@ import React, {
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 
+import MessageOutlined from '@material-ui/icons/Email';
+
+import { useFirebase } from 'react-redux-firebase';
+
+import { auth } from 'firebase';
+
+import { useHistory } from 'react-router-dom';
+
 import {
     makeStyles,
     Theme,
@@ -14,19 +22,12 @@ import {
     Typography,
     TextField,
     Button,
-    IconButton,
 } from '@material-ui/core';
 
-import { useHistory } from 'react-router-dom';
-
 import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
-import FacebookIcon from '@material-ui/icons/Facebook';
 
 import Loading from '../Loading/Loading';
 import AlertSnackbar from '../AlertSnackbar/AlertSnackbar';
-
-import { useFirebase } from 'react-redux-firebase';
-import { auth } from 'firebase';
 
 // tslint:disable-next-line: typedef
 const useStyles = makeStyles((theme: Theme) => ({
@@ -60,11 +61,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     placeholder: {
         marginTop: theme.spacing(5),
     },
-    buttonFacebook: {
+    buttonGoogle: {
         marginTop: theme.spacing(2),
-    },
-    facebook: {
-        background: '#4267B2',
     },
 }));
 
@@ -117,9 +115,9 @@ const Login = (): JSX.Element => {
         });
     };
 
-    const facebookLogin = (): void => {
+    const googleLogin = (): void => {
         firebase.login({
-            provider: 'facebook',
+            provider: 'google',
             type: 'redirect',
         });
     };
@@ -192,21 +190,18 @@ const Login = (): JSX.Element => {
                         variant='h5'
                         className={classes.placeholder}
                     >
-                        Or Sign Up With
+                        Or Sign In With
                     </Typography>
-                    <div>
-                        <IconButton
-                            onClick={facebookLogin}
-                            component='span'
-                            className={classes.buttonFacebook}
-                        >
-                            <Avatar classes={{
-                                root: classes.facebook,
-                            }}>
-                                <FacebookIcon />
-                            </Avatar>
-                        </IconButton>
-                    </div>
+                    <Button
+                        variant='outlined'
+                        fullWidth={true}
+                        color='primary'
+                        onClick={googleLogin}
+                        className={classes.buttonGoogle}
+                        startIcon={<MessageOutlined />}
+                    >
+                        Google Sign In
+                    </Button>
                 </div>
             </Container>
             <AlertSnackbar

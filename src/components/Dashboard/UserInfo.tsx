@@ -4,7 +4,7 @@ import { Avatar, Typography, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
 
 interface IUserInfoProps {
-    auth: any;
+    profile: any;
 }
 
 // tslint:disable-next-line: typedef
@@ -23,13 +23,13 @@ const UserInfo = (props: IUserInfoProps): JSX.Element => {
 
     return (
         <div className={classes.toolbar}>
-            <Avatar src={props.auth.photoURL} />
+            <Avatar src={props.profile.photoURL} />
             <div className={classes.avatarDescription}>
                 <Typography variant='subtitle2'>
-                    {props.auth.displayName}
+                    {props.profile.displayName}
                 </Typography>
                 <Typography variant='body2'>
-                    {props.auth.email}
+                    {props.profile.email}
                 </Typography>
             </div>
     </div>

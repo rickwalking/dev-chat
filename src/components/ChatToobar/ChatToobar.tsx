@@ -9,13 +9,14 @@ import {
 } from '@material-ui/core';
 
 import { useSelector } from 'react-redux';
+import { FirebaseReducer } from 'react-redux-firebase';
 
 import { makeStyles } from '@material-ui/core/styles';
 
 import MenuIcon from '@material-ui/icons/Menu';
+
+import { RootState, Profile } from '../../firebase/interfaces';
 import ChatToobarMenu from './ChatToobarMenu';
-import { FirebaseReducer } from 'react-redux-firebase';
-import { RootState } from '../../firebase/interfaces';
 
 interface ChatToobarProps {
     toggleDrawer: () => void;
@@ -44,9 +45,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ChatToobar = (props: ChatToobarProps): JSX.Element => {
     const classes = useStyles(props);
 
-    const auth: FirebaseReducer.AuthState =
-        useSelector((state: RootState): FirebaseReducer.AuthState =>
-            state.firebase.auth,
+    const profile: FirebaseReducer.Profile<Profile> =
+        useSelector((state: RootState): FirebaseReducer.Profile<Profile> =>
+            state.firebase.profile,
         );
 
     const toggleDrawer = (): void => props.toggleDrawer();
@@ -68,7 +69,7 @@ const ChatToobar = (props: ChatToobarProps): JSX.Element => {
                         DevChat
                     </Typography>
                     <div className={classes.profileIcon}>
-                        <ChatToobarMenu auth={auth} />
+                        <ChatToobarMenu profile={profile} />
                     </div>
                 </Toolbar>
             </AppBar>

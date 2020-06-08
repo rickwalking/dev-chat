@@ -16,6 +16,8 @@ import {
 
 import md5 from 'md5';
 
+import { useHistory } from 'react-router-dom';
+
 import { useFirebase } from 'react-redux-firebase';
 
 import Loading from '../Loading/Loading';
@@ -50,13 +52,17 @@ const Registration = (): JSX.Element => {
     const [error, setError] = useState('');
 
     const firebase = useFirebase();
+    const USER_AVATAR_URL: string =
+        `http://gravatar.com/avatar/${md5(email)}?d=identicon`;
+
+    const history = useHistory();
 
     const classes = useStyles();
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
-        if(!canRegister()) {
+        if (!canRegister()) {
             return;
         }
 
@@ -68,9 +74,11 @@ const Registration = (): JSX.Element => {
             password,
         }, {
             displayName: name,
-            photoURL: `http://gravatar.com/avatar/${md5(email)}?d=identicon`,
+            photoURL: USER_AVATAR_URL,
+            email,
         }).then((): void => {
             setIsLoading(false);
+            history.push('/dashboard');
         }).catch((errorResponse: any): void => {
             setIsLoading(false);
             setSnackbarOpen(true);
@@ -78,9 +86,9 @@ const Registration = (): JSX.Element => {
         });
     };
 
-    const facebookRegistration = (): void => {
+    const googleRegistration = (): void => {
         firebase.login({
-            provider: 'facebook',
+            provider: 'google',
             type: 'redirect',
         }).then((): void => {
             //
@@ -165,9 +173,9 @@ const Registration = (): JSX.Element => {
                                 variant='contained'
                                 fullWidth={true}
                                 color='primary'
-                                onClick={facebookRegistration}
+                                onClick={googleRegistration}
                             >
-                                Facebook Sign Up
+                                Google Sign Up
                             </Button>
                         </div>
                     </form>

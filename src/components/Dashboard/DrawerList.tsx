@@ -2,8 +2,12 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { RootState } from '../../firebase/interfaces';
-import { FirebaseReducer } from 'react-redux-firebase';
+import { RootState, Profile } from '../../firebase/interfaces';
+import {
+    useFirebaseConnect,
+    isLoaded,
+    FirebaseReducer,
+} from 'react-redux-firebase';
 
 import {
     List,
@@ -13,6 +17,8 @@ import {
 
 import ChannelItem from './ChannelItem';
 import DirectMessagesList from './DirectMessageLists';
+
+import SkeletonList from './SkeletonList';
 
 enum menuListType {
     CHANNEL,
@@ -28,10 +34,18 @@ interface Channel {
 }
 
 const DrawerList = (): JSX.Element => {
-    const auth: FirebaseReducer.AuthState =
-    useSelector((state: RootState): FirebaseReducer.AuthState =>
-        state.firebase.auth,
+    useFirebaseConnect([
+        { path: 'users' },
+    ]);
+
+    const users = useSelector((state: RootState): any =>
+        state.firebase.ordered.users,
     );
+
+    const profile: FirebaseReducer.Profile<Profile> =
+        useSelector((state: RootState): FirebaseReducer.Profile<Profile> =>
+            state.firebase.profile,
+        );
 
     const getListSubhead = (list: number): JSX.Element => {
         return (
@@ -39,6 +53,28 @@ const DrawerList = (): JSX.Element => {
                 {list === menuListType.CHANNEL ? 'Channels' : 'Direct Messages'}
             </ListSubheader>
         );
+    };
+
+    const getUserInfo = (): any => {
+        if (users === undefined) {
+            return [];
+        }
+
+        for (const user of users) {
+            if (user.value.email === profile['email']) {
+                user.value.displayName = 'You';
+            }
+        }
+
+        return users;
+    };
+
+    const getDirectMessagesList = (): JSX.Element => {
+        if (!isLoaded(users)) {
+            return <SkeletonList count={5} />;
+        }
+
+        return <DirectMessagesList users={getUserInfo()} />;
     };
 
     return (
@@ -56,7 +92,7 @@ const DrawerList = (): JSX.Element => {
                 aria-labelledby='nested-list-subheader'
                 subheader={getListSubhead(menuListType.PRIVATE_CONVERSATION)}
             >
-                <DirectMessagesList auth={auth} />
+                {getDirectMessagesList()}
             </List>
         </>
     );

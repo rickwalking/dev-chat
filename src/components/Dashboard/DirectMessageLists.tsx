@@ -7,22 +7,28 @@ import {
     Avatar,
 } from '@material-ui/core';
 
+import { User } from '../../firebase/interfaces';
+
 interface DirectMessagesListProps {
-    auth: any;
+    users: User[];
 }
 
 const DirectMessagesList = (props: DirectMessagesListProps): JSX.Element => {
     return (
         <>
-            <ListItem button={true}>
-                <ListItemAvatar>
-                    <Avatar src={props.auth.photoURL} />
-                </ListItemAvatar>
-                <ListItemText
-                    primary={props.auth.displayName}
-                    secondary='asdfasdfasdf'
-                />
-            </ListItem>
+        {props.users.map((user: User, index: number): JSX.Element => {
+            return (
+                <ListItem key={index} button={true}>
+                    <ListItemAvatar>
+                        <Avatar src={user.value.photoURL} />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.value.displayName}
+                        secondary='asdfasdfasdf'
+                    />
+                </ListItem>
+            );
+        })}
         </>
     );
 };

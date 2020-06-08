@@ -6,6 +6,7 @@ export interface MenuItemsList {
 export enum menuItemName {
     EDIT_PROFILE,
     LOGOFF,
+    ADD_CHANNEL,
 }
 
 export interface MyMenuItems {

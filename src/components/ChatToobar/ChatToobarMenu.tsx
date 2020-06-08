@@ -6,12 +6,12 @@ import {
     Avatar,
     makeStyles,
     Theme,
+    Dialog,
 } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom';
 
 import {
-    FirebaseReducer,
     useFirebase,
 } from 'react-redux-firebase';
 
@@ -21,6 +21,8 @@ import {
     MenuItemsList,
 } from './MenuItems-utils';
 import ShowMenuItems from './ShowMenuItems';
+import { Profile } from '../../firebase/interfaces';
+import AddChannel from '../Modal/AddChannel';
 
 // tslint:disable-next-line: typedef
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface ChatToobarMenuProps {
-    auth: FirebaseReducer.AuthState;
+    profile: Profile;
 }
 
 const ChatToobarMenu = (props: ChatToobarMenuProps): JSX.Element => {
@@ -42,6 +44,8 @@ const ChatToobarMenu = (props: ChatToobarMenuProps): JSX.Element => {
     const [anchorElement, setAnchorElement] =
         useState<null | HTMLElement>(null);
     const open: boolean = Boolean(anchorElement);
+
+    const [modalOpen, setModalOpen] = useState(false);
 
     const handleOpenMenu = (event: MouseEvent<HTMLButtonElement>): void => {
         setAnchorElement(event.currentTarget);
@@ -61,10 +65,23 @@ const ChatToobarMenu = (props: ChatToobarMenuProps): JSX.Element => {
         //
     };
 
+    const addChannel = (): void => {
+        setModalOpen(true);
+        handleCloseMenu();
+    };
+
+    const handleCloseModal = (): void => {
+        setModalOpen(false);
+    };
+
     const myMenuItems: MyMenuItems = {
         [menuItemName.EDIT_PROFILE]: {
             text: 'Edit Profile',
             callbackAction: handleEditProfile,
+        },
+        [menuItemName.ADD_CHANNEL]: {
+            text: 'Add Channel',
+            callbackAction: addChannel,
         },
         [menuItemName.LOGOFF]: {
             text: 'Logoff',
@@ -75,16 +92,17 @@ const ChatToobarMenu = (props: ChatToobarMenuProps): JSX.Element => {
     const getItems = (): MenuItemsList[] => {
         return [
             myMenuItems[menuItemName.EDIT_PROFILE],
+            myMenuItems[menuItemName.ADD_CHANNEL],
             myMenuItems[menuItemName.LOGOFF],
         ];
     };
 
     const getAvatar = (): string | undefined => {
-        if (props.auth.photoURL === null) {
+        if (props.profile.photoURL === null) {
             return undefined;
         }
 
-        return props.auth.photoURL;
+        return props.profile.photoURL;
     };
 
     return (
@@ -120,6 +138,9 @@ const ChatToobarMenu = (props: ChatToobarMenuProps): JSX.Element => {
                     items={getItems()}
                 />
             </Menu>
+            <Dialog open={modalOpen} onClose={handleCloseModal} aria-labelledby='form-dialog-title'>
+                <AddChannel closeModalCallback={handleCloseModal} />
+            </Dialog>
         </>
     );
 };

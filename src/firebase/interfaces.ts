@@ -1,10 +1,22 @@
-import { FirebaseReducer } from 'react-redux-firebase';
+import { FirebaseReducer, UserProfile } from 'react-redux-firebase';
 
-interface Profile {
-    name: string;
-    avatar: string;
+export interface Profile extends UserProfile {
+    displayName: string;
+    photoURL: string;
+    email: string;
+    avatarUrl?: string;
+    isOnline?: boolean;
+}
+
+export interface User {
+    key: string;
+    value: Profile;
+}
+
+interface Schema {
+    users: User;
 }
 
 export interface RootState {
-    firebase: FirebaseReducer.Reducer<Profile>;
+    firebase: FirebaseReducer.Reducer<Profile, Schema>;
 }

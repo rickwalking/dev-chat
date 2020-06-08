@@ -6,11 +6,13 @@ import './index.css';
 
 import firebase from './firebase/firebase';
 
+import { Provider } from 'react-redux';
+
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+
 import * as serviceWorker from './serviceWorker';
 
 import configureStore from './store/configureStore';
-import { Provider } from 'react-redux';
-import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
 
 import AuthLoaded from './Auth/AuthLoaded';
 
@@ -18,6 +20,8 @@ const store = configureStore();
 
 const rrfConfig = {
     userProfile: 'users',
+    presence: 'presence',
+    sessions: 'sessions',
 };
 
 const rrfProps = {
